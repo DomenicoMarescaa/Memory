@@ -11,6 +11,7 @@ namespace Memory
         static void Main(string[] args)
         {
             Console.WriteLine("lezgoskiy");
+            Console.WriteLine("hey");
         }
     }
 }
