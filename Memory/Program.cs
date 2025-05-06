@@ -10,9 +10,22 @@ namespace Memory
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("lezgoskiy");
-            Console.WriteLine("hey");
-            Console.WriteLine("Ciao bro");
+            int contatoreG = 0;
+            int contatoreA = 0;
+            int carta1 = 0;
+            int carta2 = 0;
+        }
+        static int punteggio(int contatore,int carta1,int carta2)
+        {
+            if(carta1=carta2)
+            {
+                contatore += 1;
+            }
+            else
+            {
+                Console.WriteLine("hai sbagliato. tocca all'avversario ");
+            }
+            return contatore;
         }
     }
 }
