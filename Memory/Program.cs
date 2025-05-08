@@ -14,18 +14,25 @@ namespace Memory
             int contatoreA = 0;
             int carta1 = 0;
             int carta2 = 0;
+
         }
-        static int punteggio(int contatore,int carta1,int carta2)
+        
+        static int punteggioG(int contatoreG, int carta1, int carta2)
         {
-            if(carta1=carta2)
+            if (carta1 == carta2)
             {
-                contatore += 1;
+                contatoreG += 1;
             }
-            else
+            return contatoreG;
+        }
+        
+        static int punteggioA(int contatoreA, int carta1, int carta2)
+        {
+            if (carta1 == carta2)
             {
-                Console.WriteLine("hai sbagliato. tocca all'avversario ");
+                contatoreA += 1;
             }
-            return contatore;
+            return contatoreA
         }
     }
 }
