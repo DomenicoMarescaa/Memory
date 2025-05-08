@@ -14,9 +14,13 @@ namespace Memory
             int contatoreA = 0;
             int carta1 = 0;
             int carta2 = 0;
-            //wao
 
-            string[] carte = {
+            int numeroCoppie = 0;
+            int righe = 0;
+            int colonne = 0;
+
+            // Vettore contenente le immagini delle carte
+            string[] immagini = {
             " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|________________|",
             " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|    ,--./,-.    |\r\n|   / #      \\   |\r\n|  |          |  |\r\n|   \\        /   |\r\n|    `._,._,'    |\r\n|                |\r\n|________________|",
             " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|     _ \\'-_,#   |\r\n|   _\\'--','`|   |\r\n|   \\`---`  /    |\r\n|    `----'``    |            \r\n|                |\r\n|                |\r\n|________________|",
@@ -37,17 +41,107 @@ namespace Memory
             " ________________\r\n|      . .       |\r\n|       ...      |\r\n|     \\~~~~~/    |\r\n|      \\   /     |\r\n|       \\ /      |\r\n|        V       |\r\n|        |       |\r\n|        |       |\r\n|       ---      |      \r\n|________________|",
             " ________________\r\n|        _       |\r\n|       {_}      |\r\n|       |(|      |\r\n|       |=|      |\r\n|      /   \\     |\r\n|      |.--|     |\r\n|      ||  |     |\r\n|      |'--|     |\r\n|      '-=-'     |\r\n|________________|\r\n"};
 
-            // prova stampa carte
-            Console.WriteLine(carte[0]);
-            Console.WriteLine();
-            Console.WriteLine(carte[2]);
-            Console.WriteLine();
-            Console.WriteLine(carte[5]);
-            Console.WriteLine();
-            Console.WriteLine(carte[9]);
-            Console.WriteLine();
-            Console.WriteLine(carte[11]);
-            Console.WriteLine();
+            Console.WriteLine(immagini[0]);
+            while (numeroCoppie <= 1)
+            {
+                Console.WriteLine("Con quante coppi di carte vuoi giocare?(minimo 2 coppie)");
+                numeroCoppie = Convert.ToInt32(Console.ReadLine());
+                if (numeroCoppie <= 1)
+                {
+                    Console.WriteLine("Coppie troppo poche,rimetterle");
+                }
+            }
+
+            numeroCoppie *= 2;
+
+            if (numeroCoppie == 4)
+            {
+                righe = 2; colonne = 2;
+            }
+            else if (numeroCoppie == 6)
+            {
+                righe = 2; colonne = 3;
+            }
+            else if (numeroCoppie == 8)
+            {
+                righe = 2; colonne = 4;
+            }
+            else if (numeroCoppie == 10)
+            {
+                righe = 2; colonne = 5;
+            }
+            else if (numeroCoppie == 12)
+            {
+                righe = 3; colonne = 4;
+            }
+            else if (numeroCoppie == 14)
+            {
+                righe = 2; colonne = 7;
+
+            }
+            else if (numeroCoppie == 16)
+            {
+                righe = 4; colonne = 4;
+            }
+            else if (numeroCoppie == 18)
+            {
+                righe = 3; colonne = 6;
+            }
+            else if (numeroCoppie == 20)
+            {
+                righe = 4; colonne = 5;
+            }
+            else if (numeroCoppie == 22)
+            {
+                righe = 2; colonne = 11;
+            }
+            else if (numeroCoppie == 24)
+            {
+                righe = 4; colonne = 6;
+            }
+            else if (numeroCoppie == 26)
+            {
+                righe = 2; colonne = 13;
+            }
+            else if (numeroCoppie == 28)
+            {
+                righe = 4; colonne = 7;
+            }
+            else if (numeroCoppie == 30)
+            {
+                righe = 3; colonne = 10;
+            }
+            string[,] carte = new string[righe, colonne];
+            PopolaGriglia(carte, immagini[0]);
+            StampaGriglia(carte, immagini[0]);
+
+            Console.ReadKey();
+
+        }
+
+        static void PopolaGriglia(string[,] carte, string immagine)
+        {
+            for (int i = 0; i < carte.GetLength(0); i++)
+            {
+                for (int j = 0; j < carte.GetLength(1); j++)
+                {
+                    carte[i, j] = "X";
+                }
+            }
+
+        }
+
+        static void StampaGriglia(string[,] carte, string immagine)
+        {
+            for (int i = 0; i < carte.GetLength(0); i++)
+            {
+                for (int j = 0; j < carte.GetLength(1); j++)
+                {
+                    Console.Write(carte[i,j] + "|");
+                }
+
+                Console.WriteLine();
+            }
 
         }
 
