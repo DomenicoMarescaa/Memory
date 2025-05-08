@@ -14,9 +14,10 @@ namespace Memory
             int contatoreA = 0;
             int carta1 = 0;
             int carta2 = 0;
+            //wao
 
         }
-        
+
         static int punteggioG(int contatoreG, int carta1, int carta2)
         {
             if (carta1 == carta2)
@@ -25,7 +26,7 @@ namespace Memory
             }
             return contatoreG;
         }
-        
+
         static int punteggioA(int contatoreA, int carta1, int carta2)
         {
             if (carta1 == carta2)
