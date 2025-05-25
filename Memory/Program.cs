@@ -18,34 +18,29 @@ namespace Memory
             int righe = 0;
             int colonne = 0;
             string difficolta = "facile"; // Impostato su "facile" di default
+            string immaginiX = "||";
 
-            string[] immagini = {
-                " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|                |\r\n|________________|",
-                " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|    ,--./,-.    |\r\n|   / #      \\   |\r\n|  |          |  |\r\n|   \\        /   |\r\n|    `._,._,'    |\r\n|                |\r\n|________________|",
-                " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|     _ \\'-_,#   |\r\n|   _\\'--','`|   |\r\n|   \\`---`  /    |\r\n|    `----'``    |\r\n|                |\r\n|                |\r\n|________________|",
-                " ________________\r\n|                |\r\n|                |\r\n|                |\r\n|     .~~~~.     |\r\n|     i====i_    |\r\n|     |cccc|_)   |\r\n|     |cccc|     |\r\n|     `-==-'     |\r\n|                |\r\n|                |\r\n|________________|",
-                // Aggiungi altre immagini se necessario
+            string[] immagini =
+            {
+                "A♥","2♥","3♥","4♥","5♥","6♥","7♥","8♥","9♥","10♥","J♥","Q♥","K♥",
+                "A♦","2♦","3♦","4♦","5♦","6♦","7♦","8♦","9♦","10♦","J♦","Q♦","K♦",
+                "A♣","2♣","3♣","4♣","5♣","6♣","7♣","8♣","9♣","10♣","J♣","Q♣","K♣",
+                "A♠","2♠","3♠","4♠","5♠","6♠","7♠","8♠","9♠","10♠","J♠","Q♠","K♠"
             };
 
-            Console.WriteLine("Modalità di difficoltà: Facile");
+            Console.WriteLine($"Modalità di difficoltà: {difficolta} ");
 
-            // Richiesta di numero di coppie
             while (numeroCoppie <= 1)
             {
                 Console.WriteLine("Con quante coppie di carte vuoi giocare? (minimo 2 coppie)");
                 numeroCoppie = Convert.ToInt32(Console.ReadLine());
 
-                if ( numeroCoppie > 1)
-                {
+                if (numeroCoppie > 1)
                     Console.WriteLine($"Hai scelto {numeroCoppie} coppie.");
-                }
                 else
-                {
                     Console.WriteLine("Input non valido. Riprova.");
-                }
             }
 
-            // Calcola il numero di righe e colonne
             numeroCoppie *= 2;
             switch (numeroCoppie)
             {
@@ -59,53 +54,75 @@ namespace Memory
                     Console.WriteLine("Numero di coppie non valido.");
                     return;
             }
-            //stampa la scelta della difficolta dell'AI
-            Console.WriteLine("scegliere la difficolta del bot (facile / media / difficile)");
-            // imposta la variabile difficolta con quella inserita dall'utente
-            difficolta = Console.ReadLine();
 
-            // Gestione della difficoltà
-            switch (difficolta.ToLower())
-            {
-                case "facile":
-                    AiFacile(ref carta1, ref carta2, ref contatoreA);
-                    break;
-                case "media":
-                    AiFacile(ref carta1, ref carta2, ref contatoreA);
-                    break;
-                case "difficile":
-                    AiFacile(ref carta1, ref carta2, ref contatoreA);
-                    break;
-                default:
-                    AiFacile(ref carta1, ref carta2, ref contatoreA);
-                    break;
-            }
-
+            bool[,] carteScoperte = new bool[righe, colonne];
             string[,] carte = new string[righe, colonne];
 
             DistribuisciCarte(carte, immagini, numeroCoppie / 2);
-            StampaGriglia(carte);
+            StampaGriglia(carte, carteScoperte, immaginiX);
 
-            
+            Console.WriteLine("Scegli la difficoltà del bot (facile / media / difficile):");
+            difficolta = Console.ReadLine();
+
+            switch (difficolta.ToLower())
+            {
+                case "facile": 
+                    AiFacile(ref carta1, ref carta2, ref contatoreA, carte, carteScoperte, immaginiX);
+
+                case "medio":
+                    AiFacile(ref carta1, ref carta2, ref contatoreA, carte, carteScoperte, immaginiX);
+
+                case "difficile":
+                    AiFacile(ref carta1, ref carta2, ref contatoreA, carte, carteScoperte, immaginiX);
+
+                default:
+                    AiFacile(ref carta1, ref carta2, ref contatoreA, carte, carteScoperte, immaginiX);
+                    break;
+            }
 
             Console.ReadKey();
         }
 
         /// <summary>
-        /// Funzione che simula il comportamento dell'AI facile.
-        /// L'AI sceglie due carte casualmente e verifica se sono uguali.
+        /// Esegue la logica dell'AI a difficoltà facile: seleziona due carte casuali non ancora scoperte.
+        /// Se le carte sono uguali, le lascia scoperte e incrementa il punteggio dell'AI.
+        /// Altrimenti, le ricopre dopo una breve attesa.
         /// </summary>
-        /// <param name="carta1">Riferimento alla prima carta selezionata dall'AI.</param>
-        /// <param name="carta2">Riferimento alla seconda carta selezionata dall'AI.</param>
-        /// <param name="contatoreA">Contatore delle giocate dell'AI.</param>
-        static void AiFacile(ref int carta1, ref int carta2, ref int contatoreA)
+        /// <param name="carta1">Indice della prima carta scelta (non usato in questa versione).</param>
+        /// <param name="carta2">Indice della seconda carta scelta (non usato in questa versione).</param>
+        /// <param name="contatoreA">Punteggio dell'AI, incrementato se trova una coppia.</param>
+        /// <param name="carte">Matrice contenente le carte.</param>
+        /// <param name="carteScoperte">Matrice booleana che indica quali carte sono scoperte.</param>
+        /// <param name="immaginiX">Stringa usata per rappresentare le carte coperte.</param>
+        static void AiFacile(ref int carta1, ref int carta2, ref int contatoreA, string[,] carte, bool[,] carteScoperte, string immaginiX)
         {
             Random rand = new Random();
+            int righe = carte.GetLength(0);
+            int colonne = carte.GetLength(1);
 
-            carta1 = rand.Next(0, 8);
-            carta2 = rand.Next(0, 8);
+            int r1, c1, r2, c2;
+            do
+            {
+                r1 = rand.Next(righe);
+                c1 = rand.Next(colonne);
+            } while (carteScoperte[r1, c1]);
 
-            if (carta1 == carta2)
+            do
+            {
+                r2 = rand.Next(righe);
+                c2 = rand.Next(colonne);
+            } while ((r1 == r2 && c1 == c2) || carteScoperte[r2, c2]);
+
+            // Scopre temporaneamente
+            carteScoperte[r1, c1] = true;
+            carteScoperte[r2, c2] = true;
+
+            Console.Clear();
+            Console.WriteLine("L'AI ha scelto due carte:");
+            StampaGriglia(carte, carteScoperte, immaginiX);
+            System.Threading.Thread.Sleep(2000);
+
+            if (carte[r1, c1] == carte[r2, c2])
             {
                 contatoreA++;
                 Console.WriteLine("AI ha trovato una coppia!");
@@ -113,38 +130,73 @@ namespace Memory
             else
             {
                 Console.WriteLine("AI ha sbagliato.");
+                System.Threading.Thread.Sleep(1000);
+                carteScoperte[r1, c1] = false;
+                carteScoperte[r2, c2] = false;
             }
+            Console.Clear();
+
+            Console.WriteLine("Stato dopo la mossa dell'AI:");
+            StampaGriglia(carte, carteScoperte, immaginiX);
+        }
+
+        static void AiMedio(ref int carta1, ref int carta2, ref int contatoreA, string[,] carte, bool[,] carteScoperte, string immaginiX)
+        {   
+            if (carta1 == 0 a&& carta2 == 0)
+            {
+                AiFacile(ref carta1, ref carta2, ref contatoreA, carte, carteScoperte, immaginiX);
+                return;
+            }
+            System.Threading.Thread.Sleep(2000);
+
+            if (carte[r1, c1] == carte[r2, c2])
+            {
+                contatoreA++;
+                Console.WriteLine("AI ha trovato una coppia!");
+            }
+            else
+            {
+                Console.WriteLine("AI ha sbagliato.");
+                System.Threading.Thread.Sleep(1000);
+                carteScoperte[r1, c1] = false;
+                carteScoperte[r2, c2] = false;
+            }
+            Console.Clear();
+
+            Console.WriteLine("Stato dopo la mossa dell'AI:");
+            StampaGriglia(carte, carteScoperte, immaginiX);
+        }
+
+        static void AiDifficile(ref int carta1, ref int carta2, ref int contatoreA, string[,] carte, bool[,] carteScoperte, string immaginiX)
+        {
+
         }
 
         /// <summary>
-        /// Funzione che distribuisce le carte nella griglia.
-        /// Le carte vengono distribuite in modo casuale.
+        /// Distribuisce casualmente le coppie di carte nella griglia, assicurandosi che ogni carta sia presente due volte.
         /// </summary>
-        /// <param name="carte">La griglia di carte dove verranno distribuite.</param>
-        /// <param name="immagini">L'array delle immagini delle carte.</param>
-        /// <param name="numeroCoppie">Il numero di coppie da distribuire.</param>
+        /// <param name="carte">Matrice dove verranno posizionate le carte distribuite.</param>
+        /// <param name="immagini">Array contenente tutte le immagini disponibili per le carte.</param>
+        /// <param name="numeroCoppie">Numero di coppie da posizionare (ogni coppia ha due carte uguali).</param>
         static void DistribuisciCarte(string[,] carte, string[] immagini, int numeroCoppie)
         {
             int totaleCarte = numeroCoppie * 2;
             string[] carteDaInserire = new string[totaleCarte];
 
-            int k = 0;
             for (int i = 0; i < numeroCoppie; i++)
             {
-                carteDaInserire[k++] = immagini[i];
-                carteDaInserire[k++] = immagini[i];
+                carteDaInserire[2 * i] = immagini[i];
+                carteDaInserire[2 * i + 1] = immagini[i];
             }
 
             Random rand = new Random();
             for (int i = 0; i < totaleCarte; i++)
             {
                 int j = rand.Next(i, totaleCarte);
-                string temp = carteDaInserire[i];
-                carteDaInserire[i] = carteDaInserire[j];
-                carteDaInserire[j] = temp;
+                (carteDaInserire[i], carteDaInserire[j]) = (carteDaInserire[j], carteDaInserire[i]);
             }
 
-            k = 0;
+            int k = 0;
             for (int r = 0; r < carte.GetLength(0); r++)
             {
                 for (int c = 0; c < carte.GetLength(1); c++)
@@ -155,72 +207,24 @@ namespace Memory
         }
 
         /// <summary>
-        /// Funzione che stampa la griglia di carte.
-        /// Mostra la disposizione delle carte nel terminale.
+        /// Stampa la griglia delle carte sullo schermo, mostrando solo le carte scoperte.
+        /// Le carte coperte vengono visualizzate con un simbolo segnaposto.
         /// </summary>
-        /// <param name="carte">La griglia di carte da stampare.</param>
-        static void StampaGriglia(string[,] carte)
+        /// <param name="carte">Matrice delle carte da stampare.</param>
+        /// <param name="carteScoperte">Matrice booleana che indica quali carte devono essere visibili.</param>
+        /// <param name="immaginiX">Simbolo utilizzato per le carte coperte (es. "||").</param>
+        static void StampaGriglia(string[,] carte, bool[,] carteScoperte, string immaginiX)
         {
+            Console.WriteLine();
             for (int i = 0; i < carte.GetLength(0); i++)
             {
                 for (int j = 0; j < carte.GetLength(1); j++)
                 {
-                    Console.Write(carte[i, j] + "|");
+                    Console.Write(carteScoperte[i, j] ? carte[i, j] + "\t" : immaginiX + "\t");
                 }
                 Console.WriteLine();
             }
-        }
-
-        /// <summary>
-        /// Funzione che mantiene e aggiorna il punteggio del giocatore.
-        /// </summary>
-        /// <param name="punteggioG">punteggio del giocatore</param>
-        /// <return>mi ritorna il punteggio del giocatore</return>
-        static int punteggioG(int contatoreG, int carta1, int carta2)
-        {
-            if (carta1 == carta2)
-            {
-                contatoreG += 1;
-            }
-            return contatoreG;
-        }
-
-        /// <summary>
-        /// Funzione che mantiene e aggiorna il punteggio dell'Ai.
-        /// </summary>
-        /// <param name="punteggioA">punteggio dell'Ai</param>
-        /// <return>mi ritorna il punteggio dell'Ai</return>
-        static int punteggioA(int contatoreA, int carta1, int carta2)
-        {
-            if (carta1 == carta2)
-            {
-                contatoreA += 1;
-            }
-            return contatoreA;
-        }
-
-        ///<summary>
-        /// seleziona il player che inizia
-        /// </summary>
-        /// <param name="player">il primo giocatore</param>
-        /// <param name="player2">il secondo player</param>
-        /// <return>mi ritorna il giocatore che inizia</return>
-        static int PlayerIniziale(int player1, int player2)
-        {
-            Random random = new Random();
-            while (player1 == player2)
-            {
-                player1 = random.Next(1, 7);
-                player2 = random.Next(1, 7);
-            }
-            if (player1 > player2)
-            {
-                return player1;
-            }
-            else
-            {
-                return player2;
-            }
+            Console.WriteLine();
         }
     }
 }
