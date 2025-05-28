@@ -11,7 +11,6 @@ namespace Memory
     {
         static void Main(string[] args)
         {
-            int contatoreG = 0;
             int contatoreA = 0;
             int carta1 = 0;
             int carta2 = 0;
@@ -19,10 +18,8 @@ namespace Memory
             int righe = 0;
             int colonne = 0;
             int difficolta = 0; // Impostato su "facile" di default
-            int SinglePlayer = 0;
+            int mode = 0;
             string immaginiX = " █";
-
-
             string[] immagini =
             {
                     "A♥","2♦","3♣","4♠","5♥","6♦","7♣","8♠","9♥","10♦","J♣","Q♠","K♥",
@@ -30,7 +27,9 @@ namespace Memory
                     "A♣","2♣","3♥","4♣","5♣","6♣","7♥","8♣","9♣","10♣","J♥","Q♣","K♣",
                     "A♠","2♠","3♠","4♥","5♠","6♠","7♠","8♥","9♠","10♠","J♠","Q♥","K♠"
                 };
+
             MenuGame();
+
             Thread.Sleep(2000);//funzione per il ritardo di 2 secondo
             Console.WriteLine("premi un tasto per continuare...");
             Console.ReadKey();
@@ -38,7 +37,7 @@ namespace Memory
             Console.Clear();
 
 
-            while (SinglePlayer != 1 && SinglePlayer != 2)
+            while (mode != 1 && mode != 2 && mode != 3)
             {
                 Console.WriteLine("Vuoi giocare contro un bot o player (in locale)");
 
@@ -46,15 +45,15 @@ namespace Memory
                 Console.WriteLine("2) Bot");
                 Console.WriteLine("3) PvP");
 
-                SinglePlayer = Convert.ToInt32(Console.ReadLine());
+                mode = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();
             }
 
             Console.Clear();
             Thread.Sleep(500);//funzione per il ritardo di 2 secondo
 
-
-            if (SinglePlayer != 1)
+            //bot mode
+            if (mode != 1 && mode != 3)
             {
                 //richiesta della difficoltà del bot        
                 Console.WriteLine("Scegli la difficoltà del bot:");
@@ -90,12 +89,12 @@ namespace Memory
                     case 16: righe = 4; colonne = 4; break;
                     case 18: righe = 3; colonne = 6; break;
                     case 20: righe = 4; colonne = 5; break;
-                    case 22: righe = 2; colonne = 11; break;
+                    case 22: righe = 5; colonne = 9; break;
                     case 24: righe = 4; colonne = 6; break;
                     default:
-                        { 
-                           Console.WriteLine("Numero di coppie non valido.");
-                           return;
+                        {
+                            Console.WriteLine("Numero di coppie non valido.");
+                            return;
                         }
                 }
 
@@ -127,16 +126,87 @@ namespace Memory
                         break;
                 }
             }
-            else // PvP
+
+            // singleplayer
+            else if (mode != 3 && mode != 2)
             {
-                //carte coperte
+                // richiesta del numero di coppie
+                while (numeroCoppie <= 1)
+                {
+                    Console.WriteLine("Con quante coppie di carte vuoi giocare? (min 2 / max 12)");
+                    numeroCoppie = Convert.ToInt32(Console.ReadLine());
+
+                    if (numeroCoppie > 1)
+                        Console.WriteLine($"Hai scelto {numeroCoppie} coppie.");
+                    else
+                        Console.WriteLine("Input non valido. Riprova.");
+                }
+
+                numeroCoppie *= 2;
+
+                switch (numeroCoppie)
+                {
+                    case 4: righe = 2; colonne = 2; break;
+                    case 6: righe = 2; colonne = 3; break;
+                    case 8: righe = 2; colonne = 4; break;
+                    case 10: righe = 2; colonne = 5; break;
+                    case 12: righe = 3; colonne = 4; break;
+                    case 16: righe = 4; colonne = 4; break;
+                    case 18: righe = 3; colonne = 6; break;
+                    case 20: righe = 4; colonne = 5; break;
+                    case 22: righe = 4; colonne = 9; break;
+                    case 24: righe = 4; colonne = 6; break;
+                    case 26: righe = 4; colonne = 6; break;
+                    default:
+                        Console.WriteLine("Numero di coppie non valido.");
+                        return;
+                }
+
+                // carte coperte e griglia carte
                 bool[,] carteScoperte = new bool[righe, colonne];
                 string[,] carte = new string[righe, colonne];
 
+                DistribuisciCarte(carte, immagini, numeroCoppie / 2);
+                SinglePlayerMode(carte, carteScoperte, immaginiX);
+            }
+
+            // pvp mode
+            else if (mode != 1 && mode != 2)
+            {
+                // Scelta numero coppie
+                while (numeroCoppie <= 1)
+                {
+                    Console.WriteLine("Con quante coppie di carte vuoi giocare? (min 2 / max 26)");
+                    numeroCoppie = Convert.ToInt32(Console.ReadLine());
+                }
+
+                numeroCoppie *= 2;
+
+                switch (numeroCoppie)
+                {
+                    case 4: righe = 2; colonne = 2; break;
+                    case 6: righe = 2; colonne = 3; break;
+                    case 8: righe = 2; colonne = 4; break;
+                    case 10: righe = 2; colonne = 5; break;
+                    case 12: righe = 3; colonne = 4; break;
+                    case 16: righe = 4; colonne = 4; break;
+                    case 18: righe = 3; colonne = 6; break;
+                    case 20: righe = 4; colonne = 5; break;
+                    case 22: righe = 4; colonne = 9; break;
+                    case 24: righe = 4; colonne = 6; break;
+                    case 26: righe = 4; colonne = 6; break;
+                    default:
+                        Console.WriteLine("Numero di coppie non valido.");
+                        return;
+                }
+
+                bool[,] carteScoperte = new bool[righe, colonne];
+                string[,] carte = new string[righe, colonne];
 
                 DistribuisciCarte(carte, immagini, numeroCoppie / 2);
-                StampaGriglia(carte, carteScoperte, immaginiX);
+                PvPLocale(carte, carteScoperte, immaginiX);
             }
+
             Console.ReadKey();
         }
 
@@ -146,76 +216,81 @@ namespace Memory
         /// <param name="carte">carte da gioco</param>
         /// <param name="carteScoperte">carte scoperte</param>
         /// <param name="immaginiX">immagini</param>
-        static void Singleplayer(ref int carta1, ref int carta2, string[,] carte, bool[,] carteScoperte, string immaginiX)
+        /// <summary>
+        /// Modalità singleplayer semplificata
+        /// </summary>
+        static void SinglePlayerMode(string[,] carte, bool[,] carteScoperte, string immaginiX)
         {
-            int righe = carte.GetLength(0);
-            int colonne = carte.GetLength(1);
-            int mosse = 0;
 
+
+            int puntiGiocatore = 0;
+            int totaleCoppie = carte.Length / 2;
+
+
+
+            // finché ci sono carte da scoprire
             while (!TutteScoperte(carteScoperte))
             {
                 Console.Clear();
-                Console.WriteLine($"Mosse effettuate: {mosse}");
-
-                DistribuisciCarte(carte, immaginiX, righe * colonne / 2);
+                Console.WriteLine("Modalità: SinglePlayer");
+                Console.WriteLine($"Coppie trovate: {puntiGiocatore}/{totaleCoppie}");
                 StampaGriglia(carte, carteScoperte, immaginiX);
 
-                int gr1, gc1, gr2, gc2;
-
-                // Prima carta
+                // input prima carta
+                int r1, c1;
                 while (true)
                 {
                     Console.Write("Riga prima carta: ");
-                    gr1 = Convert.ToInt32(Console.ReadLine()) - 1;
+                    r1 = Convert.ToInt32(Console.ReadLine()) - 1;
                     Console.Write("Colonna prima carta: ");
-                    gc1 = Convert.ToInt32(Console.ReadLine()) - 1;
-                    if (!carteScoperte[gr1, gc1]) break;
-                    Console.WriteLine("Carta già scoperta. Riprova.");
+                    c1 = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                    if (!carteScoperte[r1, c1]) break;
+                    Console.WriteLine("Carta già scoperta, riprova.");
                 }
 
-                carteScoperte[gr1, gc1] = true;
+                carteScoperte[r1, c1] = true;
                 Console.Clear();
-                DistribuisciCarte(carte, immaginiX, righe * colonne / 2);
                 StampaGriglia(carte, carteScoperte, immaginiX);
 
-                // Seconda carta
+                // input seconda carta
+                int r2, c2;
                 while (true)
                 {
                     Console.Write("Riga seconda carta: ");
-                    gr2 = Convert.ToInt32(Console.ReadLine()) - 1;
+                    r2 = Convert.ToInt32(Console.ReadLine()) - 1;
                     Console.Write("Colonna seconda carta: ");
-                    gc2 = Convert.ToInt32(Console.ReadLine()) - 1;
-                    if ((gr1 != gr2 || gc1 != gc2) && !carteScoperte[gr2, gc2]) break;
-                    Console.WriteLine("Carta non valida o già scoperta. Riprova.");
+                    c2 = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                    if ((r1 != r2 || c1 != c2) && !carteScoperte[r2, c2]) break;
+                    Console.WriteLine("Carta non valida o già scoperta, riprova.");
                 }
 
-                carteScoperte[gr2, gc2] = true;
+                carteScoperte[r2, c2] = true;
                 Console.Clear();
-                DistribuisciCarte(carte, immaginiX, righe * colonne / 2);
                 StampaGriglia(carte, carteScoperte, immaginiX);
 
-                // Salva gli indici delle carte scelte
-                carta1 = gr1 * colonne + gc1;
-                carta2 = gr2 * colonne + gc2;
-
-                if (carte[gr1, gc1] == carte[gr2, gc2])
+                // controlla se è una coppia
+                if (carte[r1, c1] == carte[r2, c2])
                 {
                     Console.WriteLine("Hai trovato una coppia!");
+                    puntiGiocatore++;
                 }
                 else
                 {
                     Console.WriteLine("Non è una coppia.");
-                    carteScoperte[gr1, gc1] = false;
-                    carteScoperte[gr2, gc2] = false;
+                    Thread.Sleep(1000);
+                    carteScoperte[r1, c1] = false;
+                    carteScoperte[r2, c2] = false;
                 }
 
-                mosse++;
                 Console.WriteLine("Premi un tasto per continuare...");
                 Console.ReadKey();
             }
 
             Console.Clear();
-            Console.WriteLine($"Partita terminata! Hai completato il gioco in {mosse} mosse.");
+            Console.WriteLine("Hai completato il gioco!");
+            Console.WriteLine($"Punti totali: {puntiGiocatore}");
             Console.WriteLine("Premi un tasto per uscire...");
             Console.ReadKey();
         }
@@ -226,7 +301,7 @@ namespace Memory
         /// <param name="carte">carte da gioco</param>
         /// <param name="carteScoperte">carte scoperte</param>
         /// <param name="immaginiX">carte coperte</param>
-        static void PvPLocale(ref int carta1, ref int carta2, ref int contatoreA, string[,] carte, bool[,] carteScoperte, string immaginiX)
+        static void PvPLocale(string[,] carte, bool[,] carteScoperte, string immaginiX)
         {
             int punteggioGiocatore1 = 0;
             int punteggioGiocatore2 = 0;
@@ -236,7 +311,7 @@ namespace Memory
             {
                 Console.Clear();
                 Console.WriteLine($"Modalità PvP - Turno Giocatore {giocatoreCorrente}");
-                Console.WriteLine($"Punteggio - Giocatore 1: {punteggioGiocatore1} | Giocatore 2: {punteggioGiocatore2}");
+                Console.WriteLine($"Punteggio - Giocatore I: {punteggioGiocatore1} | Giocatore II: {punteggioGiocatore2}");
                 StampaGriglia(carte, carteScoperte, immaginiX);
 
                 // Input prima carta
@@ -252,6 +327,8 @@ namespace Memory
                 }
                 carteScoperte[r1, c1] = true;
                 Console.Clear();
+                Console.WriteLine($"Modalità PvP - Turno Giocatore {giocatoreCorrente}");
+                Console.WriteLine($"Punteggio - Giocatore 1: {punteggioGiocatore1} | Giocatore 2: {punteggioGiocatore2}");
                 StampaGriglia(carte, carteScoperte, immaginiX);
 
                 // Input seconda carta
@@ -293,15 +370,16 @@ namespace Memory
             // Risultato finale
             Console.Clear();
             Console.WriteLine("Tutte le carte sono state trovate!");
+            Console.WriteLine();
             Console.WriteLine($"Punteggio finale - Giocatore 1: {punteggioGiocatore1} | Giocatore 2: {punteggioGiocatore2}");
-
+            Console.WriteLine();
             if (punteggioGiocatore1 > punteggioGiocatore2)
                 Console.WriteLine("Giocatore 1 ha vinto!");
             else if (punteggioGiocatore2 > punteggioGiocatore1)
                 Console.WriteLine("Giocatore 2 ha vinto!");
             else
                 Console.WriteLine("È un pareggio!");
-
+            Console.WriteLine();
             Console.WriteLine("Premi un tasto per uscire...");
             Console.ReadKey();
         }
@@ -1020,33 +1098,33 @@ namespace Memory
         /// <param name="numeroCoppie">Numero di coppie da posizionare</param>
         static void DistribuisciCarte(string[,] carte, string[] immagini, int numeroCoppie)
         {
-            // verifica che il numero di coppie non superi il numero di immagini disponibili
-            int totaleCarte = numeroCoppie * 2;
-            string[] carteDaInserire = new string[totaleCarte];
 
-            // verifica che il numero di coppie non superi il numero di immagini disponibili
-            for (int i = 0; i < numeroCoppie; i++)
+            int totaleCarte = numeroCoppie * 2;  // Calcola il numero totale di carte (ogni coppia è composta da 2 carte)
+
+            string[] carteDaInserire = new string[totaleCarte]; // Crea un array temporaneo per contenere tutte le carte (con le coppie duplicate)
+
+            for (int i = 0; i < numeroCoppie; i++)  // Inserisce le immagini nel vettore, creando le coppie
             {
-                carteDaInserire[2 * i] = immagini[i];
-                carteDaInserire[2 * i + 1] = immagini[i];
+                carteDaInserire[2 * i] = immagini[i];// Inserisce la prima carta della coppia
+                carteDaInserire[2 * i + 1] = immagini[i];  // Inserisce la seconda carta della coppia
             }
-            // mescola le carte
-            Random rand = new Random();
 
-            for (int i = 0; i < totaleCarte; i++)
+            Random rand = new Random(); // Crea un oggetto Random per mescolare le carte
+            for (int i = 0; i < totaleCarte; i++) // Mescola le carte nell'array usando l'algoritmo di Fisher-Yates
             {
-                int j = rand.Next(i, totaleCarte);
-                (carteDaInserire[i], carteDaInserire[j]) = (carteDaInserire[j], carteDaInserire[i]);
+                int j = rand.Next(i, totaleCarte); // Estrae un indice casuale da i a totaleCarte - 1
+                (carteDaInserire[i], carteDaInserire[j]) = (carteDaInserire[j], carteDaInserire[i]);  // Scambia le carte nelle posizioni i e j
             }
-            int k = 0;// indice array
+            int k = 0;// Indice per scorrere le carte da inserire nella matrice
 
-            // assicurati che la matrice carte abbia le dimensioni corrette
-            for (int r = 0; r < carte.GetLength(0); r++)
+
+            for (int r = 0; r < carte.GetLength(0); r++) // Scorre le righe della matrice
             {
-                // riempi la riga corrente della matrice carte con le carte mescolate
-                for (int c = 0; c < carte.GetLength(1); c++)
+
+                for (int c = 0; c < carte.GetLength(1); c++) // Scorre le colonne della riga corrente
                 {
-                    carte[r, c] = carteDaInserire[k++];
+                    // Inserisce una carta nella posizione [r, c] della matrice
+                    carte[r, c] = carteDaInserire[k++];// Usa e incrementa k
                 }
             }
         }
