@@ -12,8 +12,7 @@ fino a modalità singleplayer contro un bot con difficoltà regolabile.
 
 ## Requisiti
 
-- Windows 10 o superiore
-- .NET Framework (versione supportata da Windows Forms)
+- Windows
 - Visual Studio (consigliato per la compilazione)
 
 ## Avvio rapido
